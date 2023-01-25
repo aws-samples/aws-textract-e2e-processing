@@ -1,0 +1,9 @@
+{
+  "document_type": "acord140",
+  "output_csv_paths": [
+    "s3://documentsplitterworkflow-textractsimplesyncworkfl-14uq5wb21n1hw/textract-csv-output/2023-01-06T04:15:40+00:00/9.csv",
+    "s3://documentsplitterworkflow-textractsimplesyncworkfl-14uq5wb21n1hw/textract-csv-output/2023-01-06T04:15:54+00:00/10.csv",
+    "s3://documentsplitterworkflow-textractsimplesyncworkfl-14uq5wb21n1hw/textract-csv-output/2023-01-06T04:16:38+00:00/11.csv"
+  ],
+  "original_document_pages": "9-11"
+}
