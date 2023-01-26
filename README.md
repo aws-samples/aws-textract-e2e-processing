@@ -51,7 +51,7 @@ https://github.com/aws-samples/aws-document-classifier-and-splitter.
 
 After training your classifier and creating an endpoint, you should have a Comprehend Custom Classification Endpoint ARN. 
 
-Navigate to ```docsplitter/document_split_workflow.py``` and modify lines 26-27 which contain ```comprehend_classifier_endpoint```. Paste in your endpoint ARN [in this line](https://github.com/rppth/aws-textract-cdk-commercial-accord/blob/main/docsplitter/document_split_workflow.py#L27). It should be in the form: 
+Navigate to ```docsplitter/document_split_workflow.py``` and modify lines 26-27 which contain ```comprehend_classifier_endpoint```. Paste in your endpoint ARN [in this line](https://github.com/aws-samples/aws-textract-cdk-commercial-accord/blob/main/docsplitter/document_split_workflow.py#L27). It should be in the form: 
 
 ```arn:aws:comprehend:<your-region>:<your-account-id>:document-classifier-endpoint/<your-classifier-name>```.
 
