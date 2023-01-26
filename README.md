@@ -1,4 +1,4 @@
-# Amazon Textract IDP Classification for Multi-Form Document Packages
+# Amazon Textract IDP - End to End Document Processing 
 
 # Deployment
 
