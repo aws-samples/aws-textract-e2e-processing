@@ -37,7 +37,7 @@ aws --version
 
 Clone the IDP workflow respository and then ```cd``` into the workflows folder.
 ```
-git clone https://github.com/aws-samples/aws-textract-cdk-commercial-accord.git
+git clone https://github.com/aws-samples/aws-textract-cdk-commercial-acord.git
 cd aws-textract-cdk-commercial-accord/
 ```
 
