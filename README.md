@@ -43,7 +43,7 @@ cd aws-textract-cdk-commercial-accord/
 
 ## Document Splitter Workflow Setup
 
-There will be two areas to modify.
+There will be two areas to modify. In our demo today will be using Acord Insurance Forms 
 
 ### 1. Comprehend Classifier
 If you train your own classifier with a set of documents using workflow1 of this project, you can train your own Comprehend Classifier: 
