@@ -18,7 +18,7 @@ Resources:
         - x86_64
       Environment:
         Variables:
-            CONFIGURATION_TABLE: "RM-PaystubW2configuratorTextractConfigurationTableD0BAEF8E-1AG0QF51SQ4GZ"
+            CONFIGURATION_TABLE: "<CONFIGURATION_TABLE_NAME>"
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: .

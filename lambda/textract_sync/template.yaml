@@ -17,8 +17,8 @@ Resources:
       Environment:
         Variables:
           S3_OUTPUT_PREFIX: textract-csv-output
-          S3_OUTPUT_BUCKET: documentsplitterworkflow-textractsimplesyncworkfl-1oy8gsfyhnhz6
-          SQS_QUEUE_URL: SchademCdkStackPaystubStack-textractsynctaskSyncRequestsBC26E72B-kID9dZUtmCZM
+          S3_OUTPUT_BUCKET: "<S3_OUTPUT_BUCKET>"
+          SQS_QUEUE_URL: "<SQS_QUEUE_URL>"
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: .

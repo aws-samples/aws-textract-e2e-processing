@@ -24,7 +24,7 @@ class DocumentSplitterWorkflow(Stack):
         s3_csv_output_prefix = "textract-csv-output"
         s3_joined_output_prefix = "textract-joined-output"
         comprehend_classifier_endpoint = \
-            "arn:aws:comprehend:us-east-1:988522673913:document-classifier-endpoint/Classifier-20230110004248"
+            "arn:aws:comprehend:<REGION>:<ACCOUNT_ID>:document-classifier-endpoint/<CLASSIFIER_NAME>"
 
         # BEWARE! This is a demo/POC setup, remove the auto_delete_objects=True
         # to make sure the data is not lost

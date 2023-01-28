@@ -8,16 +8,16 @@ s3 = boto3.client("s3")
 
 files = [
   {
-    "JoinedCSVOutputPath": "s3://documentsplitterworkflow-textractsimplesyncworkfl-70uw1q72o402/textract-joined-output/acord125_pages_1-4_2023-01-10T03:49:36.410738.csv"
+    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/acord125_pages_1-4_<TIMESTAMP>.csv"
   },
   {
-    "JoinedCSVOutputPath": "s3://documentsplitterworkflow-textractsimplesyncworkfl-70uw1q72o402/textract-joined-output/acord126_pages_5-8_2023-01-10T03:49:36.413892.csv"
+    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/acord126_pages_5-8_<TIMESTAMP>.csv"
   },
   {
-    "JoinedCSVOutputPath": "s3://documentsplitterworkflow-textractsimplesyncworkfl-70uw1q72o402/textract-joined-output/acord140_pages_9-11_2023-01-10T03:49:36.585691.csv"
+    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/acord140_pages_9-11_<TIMESTAMP>.csv"
   },
   {
-    "JoinedCSVOutputPath": "s3://documentsplitterworkflow-textractsimplesyncworkfl-70uw1q72o402/textract-joined-output/property_affidavit_pages_12-12_2023-01-10T03:49:36.265905.csv"
+    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/property_affidavit_pages_12-12_<TIMESTAMP>.csv"
   }
 ]
 

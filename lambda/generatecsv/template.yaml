@@ -17,7 +17,7 @@ Resources:
       Environment:
         Variables:
           CSV_S3_OUTPUT_PREFIX: textract-csv-output
-          CSV_S3_OUTPUT_BUCKET: documentsplitterworkflow-textractsimplesyncworkfl-14xa314007k78
+          CSV_S3_OUTPUT_BUCKET: "<S3_OUTPUT_BUCKET>"
           LOG_LEVEL: DEBUG
     Metadata:
       Dockerfile: Dockerfile
