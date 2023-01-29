@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  python3.9
+
+  Sample SAM Template for sam-app
+
+Globals:
+  Function:
+    Timeout: 900
+
+Resources:
+  SyncFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      PackageType: Image
+      Environment:
+        Variables:
+          COMPREHEND_CLASSIFIER_ARN: "arn:aws:comprehend:<REGION>:<ACCOUNT_ID>:document-classifier-endpoint/<CLASSIFIER_NAME>"
+          SQS_QUEUE_URL: "https://sqs.<REGION>.amazonaws.com/<ACCOUNT_ID>/<SQS_QUEUE_NAME>"
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: .
+      DockerTag: python3.9-v1
+
