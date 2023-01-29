@@ -74,7 +74,7 @@ def lambda_handler(event, _):
     if not comprehend_classifier_arn:
         raise Exception("no COMPREHEND_CLASSIFIER_ARN set")
 
-    sqs_max_retries = os.environ.get('SQS_MAX_RETRIES', 3)
+    sqs_max_retries = int(os.environ.get('SQS_MAX_RETRIES', 3))
     sqs_min_vis_timeout = int(os.environ.get('SQS_MIN_VIS_TIMEOUT', 15))
     sqs_max_vis_timeout = int(os.environ.get('SQS_MAX_VIS_TIMEOUT', 30))
 
@@ -98,7 +98,7 @@ def lambda_handler(event, _):
             raise ValueError("Need Payload with manifest to process message.")
 
         receipt_handle = record["receiptHandle"]
-        approx_receive_count = record["attributes"]["ApproximateReceiveCount"]
+        approx_receive_count = int(record["attributes"]["ApproximateReceiveCount"])
 
         manifest: tm.IDPManifest = tm.IDPManifestSchema().load(
             message["Payload"]['manifest'])  # type: ignore
@@ -189,7 +189,7 @@ def lambda_handler(event, _):
                                                   f"{e}\nafter {sqs_max_retries} Lambda retry attempts",
                                                   token, sqs_queue_url, message, receipt_handle)
         except Exception as e:
-            send_failure_to_step_function(e, 'unhandled', str(e), token, sqs_queue_url, message, receipt_handle)
+            send_failure_to_step_function('unhandled', str(e), token, sqs_queue_url, message, receipt_handle)
 
         if not processing_status:
             sqs.change_message_visibility(QueueUrl=sqs_queue_url,
