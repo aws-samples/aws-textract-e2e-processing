@@ -7,8 +7,10 @@ import aws_cdk.aws_stepfunctions_tasks as tasks
 import aws_cdk.aws_lambda as lambda_
 import aws_cdk.aws_iam as iam
 import aws_cdk.aws_dynamodb as dynamodb
+import aws_cdk.aws_sqs as sqs
 import aws_cdk.custom_resources as custom_resources
 from aws_cdk import (CfnOutput, RemovalPolicy, Stack, Duration, Aws, CustomResource)
+from aws_cdk.aws_lambda_event_sources import SqsEventSource
 import amazon_textract_idp_cdk_constructs as tcdk
 
 
@@ -16,15 +18,14 @@ class DocumentSplitterWorkflow(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
-        
+
         script_location = os.path.dirname(__file__)
         s3_upload_prefix = "uploads"
         s3_output_prefix = "textract-output"
-        s3_txt_output_prefix = "textract-text-output"
         s3_csv_output_prefix = "textract-csv-output"
         s3_joined_output_prefix = "textract-joined-output"
         comprehend_classifier_endpoint = \
-            "arn:aws:comprehend:us-east-1:988522673913:document-classifier-endpoint/Classifier-20230110004248"
+            "arn:aws:comprehend:<REGION>:<ACCOUNT_ID>:document-classifier-endpoint/<CLASSIFIER_NAME>"
 
         # BEWARE! This is a demo/POC setup, remove the auto_delete_objects=True
         # to make sure the data is not lost
@@ -38,7 +39,65 @@ class DocumentSplitterWorkflow(Stack):
         s3_output_bucket = document_bucket.bucket_name
         workflow_name = "DocumentSplitterWorkflow"
 
-        # DEFINE Lambda functions, policies, DynamoDB table, Provider, CustomResource ###############
+        # DEFINE Lambda functions, policies, SQS queue, SQS EventSource,
+        # DynamoDB table, Provider, CustomResource
+        comprehend_sync_sqs = sqs.Queue(
+            self,
+            'ComprehendRequests',
+            visibility_timeout=Duration.seconds(360)
+        ) # visibility_timeout should be at least six times comprehend_sync_call_function timeout
+
+        put_on_sqs_function = lambda_.DockerImageFunction(
+            self,
+            'PutOnSQS',
+            code=lambda_.DockerImageCode.from_image_asset(os.path.join(script_location,
+                                                                       '../lambda/put_on_sqs/')),
+            architecture=lambda_.Architecture.X86_64,
+            memory_size=256,
+            timeout=Duration.seconds(60),
+            environment={
+                "LOG_LEVEL": "DEBUG",
+                "SQS_QUEUE_URL": comprehend_sync_sqs.queue_url,
+                "SQS_MAX_DELAY": "10"
+            }
+        )
+        put_on_sqs_function.add_to_role_policy(iam.PolicyStatement(
+            actions=['sqs:SendMessage'], resources=[comprehend_sync_sqs.queue_arn]
+        ))
+
+        comprehend_sync_call_function = lambda_.DockerImageFunction(
+            self,
+            'ComprehendSyncCall',
+            code=lambda_.DockerImageCode.from_image_asset(os.path.join(script_location,
+                                                                       '../lambda/comprehend_sync/')),
+            memory_size=256,
+            timeout=Duration.seconds(60),
+            environment={
+                "LOG_LEVEL": "DEBUG",
+                "SQS_QUEUE_URL": comprehend_sync_sqs.queue_url,
+                "SQS_MAX_RETRIES": "4",
+                "SQS_MIN_VIS_TIMEOUT": "5",
+                "SQS_MAX_VIS_TIMEOUT": "15",
+                "COMPREHEND_CLASSIFIER_ARN": comprehend_classifier_endpoint
+            }
+        )
+        comprehend_sync_call_function.add_event_source(SqsEventSource(comprehend_sync_sqs, batch_size=1))
+        comprehend_sync_call_function.add_to_role_policy(iam.PolicyStatement(
+            actions=['comprehend:ClassifyDocument'], resources=['*']
+        ))
+        comprehend_sync_call_function.add_to_role_policy(iam.PolicyStatement(
+            actions=["textract:Analyze*", "textract:Detect*"],
+            resources=["*"]
+        ))
+        comprehend_sync_call_function.add_to_role_policy(iam.PolicyStatement(
+            actions=['s3:GetObject', 's3:ListBucket', 's3:PutObject'],
+            resources=[f"arn:aws:s3:::{s3_output_bucket}", f"arn:aws:s3:::{s3_output_bucket}/*"]
+        ))
+
+        comprehend_sync_call_function.add_to_role_policy(iam.PolicyStatement(
+            actions=['states:SendTaskFailure', 'states:SendTaskSuccess'], resources=['*']
+        ))
+
         lambda_decider: lambda_.IFunction = lambda_.DockerImageFunction(
             self,
             "LambdaDecider",
@@ -52,7 +111,7 @@ class DocumentSplitterWorkflow(Stack):
             iam.PolicyStatement(
                 actions=["s3:GetObject"],
                 resources=[f"arn:aws:s3:::{s3_output_bucket}", f"arn:aws:s3:::{s3_output_bucket}/*"]))
-        
+
         lambda_textract_sync: lambda_.IFunction = lambda_.DockerImageFunction(
             self,
             "LambdaTextractSync",
@@ -79,30 +138,7 @@ class DocumentSplitterWorkflow(Stack):
             iam.PolicyStatement(
                 actions=['states:SendTaskFailure', 'states:SendTaskSuccess'],
                 resources=["*"]))
-        
-        lambda_generate_text: lambda_.IFunction = lambda_.DockerImageFunction(
-            self,
-            "LambdaGenerateText",
-            code=lambda_.DockerImageCode.from_image_asset(
-                os.path.join(script_location,
-                             '../lambda/generatecsv/')),
-            memory_size=1048,
-            timeout=Duration.minutes(15),
-            architecture=lambda_.Architecture.X86_64,
-            environment={
-                "LOG_LEVEL": "DEBUG",
-                "CSV_S3_OUTPUT_BUCKET": s3_output_bucket,
-                "CSV_S3_OUTPUT_PREFIX": s3_txt_output_prefix,
-                "OUTPUT_TYPE": "LINES"})
-        lambda_generate_text.add_to_role_policy(
-            iam.PolicyStatement(
-                actions=['s3:Get*', 's3:List*', 's3:PutObject'],
-                resources=[f"arn:aws:s3:::{s3_output_bucket}", f"arn:aws:s3:::{s3_output_bucket}/*"]))
-        lambda_generate_text.add_to_role_policy(
-            iam.PolicyStatement(
-                actions=['states:SendTaskFailure', 'states:SendTaskSuccess'],
-                resources=["*"]))
-        
+
         lambda_generate_csv: lambda_.IFunction = lambda_.DockerImageFunction(
             self,
             "LambdaGenerateCSV",
@@ -115,8 +151,7 @@ class DocumentSplitterWorkflow(Stack):
             environment={
                 "LOG_LEVEL": "DEBUG",
                 "CSV_S3_OUTPUT_BUCKET": s3_output_bucket,
-                "CSV_S3_OUTPUT_PREFIX": s3_csv_output_prefix,
-                "OUTPUT_TYPE": "CSV"})
+                "CSV_S3_OUTPUT_PREFIX": s3_csv_output_prefix})
         lambda_generate_csv.add_to_role_policy(
             iam.PolicyStatement(
                 actions=['s3:Get*', 's3:List*', 's3:PutObject'],
@@ -137,7 +172,7 @@ class DocumentSplitterWorkflow(Stack):
             architecture=lambda_.Architecture.X86_64,
             environment={
                 "LOG_LEVEL": "DEBUG"})
-        
+
         configuration_table = dynamodb.Table(
             self,
             "TextractConfigurationTable",
@@ -146,7 +181,7 @@ class DocumentSplitterWorkflow(Stack):
             ),
             removal_policy=RemovalPolicy.DESTROY,
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST)
-        
+
         lambda_config_prefill: lambda_.IFunction = lambda_.DockerImageFunction(
             self,
             "LambdaConfigurationPrefill",
@@ -164,13 +199,13 @@ class DocumentSplitterWorkflow(Stack):
                 actions=['dynamodb:PutItem', 'dynamodb:GetItem'],
                 resources=[configuration_table.table_arn]))
         lambda_config_prefill.node.add_dependency(configuration_table)
-        
+
         provider = custom_resources.Provider(
             self,
             "Provider",
             on_event_handler=lambda_config_prefill)
         CustomResource(self, "Resource", service_token=provider.service_token)
-            
+
         lambda_configurator: lambda_.IFunction = lambda_.DockerImageFunction(
             self,
             "LambdaClassificationConfigurator",
@@ -187,7 +222,7 @@ class DocumentSplitterWorkflow(Stack):
             iam.PolicyStatement(
                 actions=['dynamodb:PutItem', 'dynamodb:GetItem'],
                 resources=[configuration_table.table_arn]))
-        
+
         lambda_generate_classification_mapping: lambda_.IFunction = lambda_.DockerImageFunction(
             self,
             "LambdaGenerateClassificationMapping",
@@ -196,7 +231,7 @@ class DocumentSplitterWorkflow(Stack):
                              '../lambda/map_classifications_lambda/')),
             memory_size=128,
             architecture=lambda_.Architecture.X86_64)
-        
+
         lambda_compile_paths: lambda_.IFunction = lambda_.DockerImageFunction(
             self,
             "LambdaCompilePaths",
@@ -208,7 +243,7 @@ class DocumentSplitterWorkflow(Stack):
             architecture=lambda_.Architecture.X86_64,
             environment={
                 "LOG_LEVEL": "DEBUG"})
-        
+
         lambda_join_csv: lambda_.IFunction = lambda_.DockerImageFunction(
             self,
             "LambdaJoinCSV",
@@ -243,12 +278,12 @@ class DocumentSplitterWorkflow(Stack):
             "TaskDocumentSplitter",
             s3_output_bucket=s3_output_bucket,
             s3_output_prefix=s3_output_prefix)
-        
+
         # Step Functions task to call Textract
-        textract_sync_ocr_task = tasks.LambdaInvoke(
+        comprehend_sync_task = tasks.LambdaInvoke(
             self,
-            "TaskTextractSyncOCR",
-            lambda_function=lambda_textract_sync,
+            'TaskClassification',
+            lambda_function=put_on_sqs_function,
             integration_pattern=sfn.IntegrationPattern.WAIT_FOR_TASK_TOKEN,
             timeout=Duration.hours(24),
             payload=sfn.TaskInput.from_object({
@@ -258,47 +293,6 @@ class DocumentSplitterWorkflow(Stack):
                 sfn.JsonPath.string_at('$$.Execution.Id'),
                 "Payload":
                 sfn.JsonPath.entire_payload,
-            }),
-            result_path="$.textract_result")
-        textract_sync_ocr_task.add_retry(
-            max_attempts=1,
-            backoff_rate=1,
-            interval=Duration.seconds(1),
-            errors=['ThrottlingException', 'LimitExceededException',
-                    'InternalServerError', 'ProvisionedThroughputExceededException'])
-
-        # Step Functions task to generate text file from Textract JSON output
-        generate_text_task = tasks.LambdaInvoke(
-            self,
-            "TaskGenerateText",
-            lambda_function=lambda_generate_text,
-            integration_pattern=sfn.IntegrationPattern.WAIT_FOR_TASK_TOKEN,
-            timeout=Duration.hours(24),
-            payload=sfn.TaskInput.from_object({
-                "Token":
-                sfn.JsonPath.task_token,
-                "ExecutionId":
-                sfn.JsonPath.string_at('$$.Execution.Id'),
-                "Payload":
-                sfn.JsonPath.entire_payload,
-            }),
-            result_path="$.txt_output_location")
-
-        # Step Functions task for classification
-        comprehend_sync_task = tcdk.ComprehendGenericSyncSfnTask(
-            self,
-            "TaskClassification",
-            comprehend_classifier_arn=comprehend_classifier_endpoint,
-            integration_pattern=sfn.IntegrationPattern.WAIT_FOR_TASK_TOKEN,
-            lambda_log_level="DEBUG",
-            timeout=Duration.hours(24),
-            input=sfn.TaskInput.from_object({
-              "Token":
-              sfn.JsonPath.task_token,
-              "ExecutionId":
-              sfn.JsonPath.string_at('$$.Execution.Id'),
-              "Payload":
-              sfn.JsonPath.entire_payload,
             }),
             result_path="$.classification")
 
@@ -314,7 +308,7 @@ class DocumentSplitterWorkflow(Stack):
             lambda_function=lambda_configurator,
             timeout=Duration.seconds(100),
             output_path='$.Payload')
-        
+
         # Step Functions task to call Textract
         textract_sync_queries_task = tasks.LambdaInvoke(
             self,
@@ -360,18 +354,18 @@ class DocumentSplitterWorkflow(Stack):
             "TaskGenerateClassificationMapping",
             lambda_function=lambda_generate_classification_mapping,
             output_path='$.Payload')
-            
+
         compile_paths_task = tasks.LambdaInvoke(
             self,
             "TaskCompilePaths",
             lambda_function=lambda_compile_paths)
-    
+
         join_csv_task = tasks.LambdaInvoke(
             self,
             "TaskJoinCSV",
             lambda_function=lambda_join_csv,
             output_path='$.Payload')
-        
+
         # Step Functions Flow Definition #########
 
         # Routing based on document type
@@ -379,9 +373,9 @@ class DocumentSplitterWorkflow(Stack):
                        .when(sfn.Condition.string_equals('$.classification.documentType', 'NONE'),
                              sfn.Fail(self, "DocumentTypeNotImplemented")) \
                        .otherwise(sfn.Pass(self, "PassState"))
-                    
+
         # Map state to classify pages in parallel
-        # Creates manifest 
+        # Creates manifest
         # Generates S3 path from S3 Document Splitter Output Bucket and Output Path
         classify_pages_map = sfn.Map(
             self,
@@ -403,7 +397,7 @@ class DocumentSplitterWorkflow(Stack):
             self,
             "ProcessPagesMapState",
             items_path=sfn.JsonPath.string_at('$.Payload'))
-        
+
         # Map state to compile each page's CSV into one CSV document
         compile_pages_map = sfn.Map(
             self,
@@ -411,10 +405,8 @@ class DocumentSplitterWorkflow(Stack):
             items_path=sfn.JsonPath.string_at('$.Payload'))
 
         # Classify and route
-        textract_sync_ocr_task.next(generate_text_task) \
-            .next(comprehend_sync_task) \
-            .next(doc_type_choice)
-        classify_pages_map.iterator(textract_sync_ocr_task)
+        comprehend_sync_task.next(doc_type_choice)
+        classify_pages_map.iterator(comprehend_sync_task)
 
         configurator_task.next(textract_sync_queries_task) \
             .next(generate_csv_task) \
@@ -429,13 +421,13 @@ class DocumentSplitterWorkflow(Stack):
             .next(process_pages_map) \
             .next(compile_paths_task) \
             .next(compile_pages_map)
-            
+
         compile_pages_map.iterator(join_csv_task)
 
         state_machine = sfn.StateMachine(self,
                                          workflow_name,
                                          definition=workflow_chain)
-                                         
+
         # Step Functions definition end ###############
 
         # Lambda function to start workflow on new object at S3 bucket/prefix location

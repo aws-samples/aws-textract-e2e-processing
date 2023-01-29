@@ -51,9 +51,9 @@ https://github.com/aws-samples/aws-document-classifier-and-splitter.
 
 After training your classifier and creating an endpoint, you should have a Comprehend Custom Classification Endpoint ARN. 
 
-Navigate to ```docsplitter/document_split_workflow.py``` and modify lines 26-27 which contain ```comprehend_classifier_endpoint```. Paste in your endpoint ARN [in this line](https://github.com/aws-samples/aws-textract-cdk-commercial-acord/blob/main/docsplitter/document_split_workflow.py#L27). It should be in the form: 
+Navigate to ```docsplitter/document_split_workflow.py``` and modify lines 27-28 which contain ```comprehend_classifier_endpoint```. Paste in your endpoint ARN [in this line](https://github.com/aws-samples/aws-textract-cdk-commercial-acord/blob/main/docsplitter/document_split_workflow.py#L28). It should be in the form: 
 
-```arn:aws:comprehend:<your-region>:<your-account-id>:document-classifier-endpoint/<your-classifier-name>```.
+```arn:aws:comprehend:<REGION>:<ACCOUNT_ID>:document-classifier-endpoint/<CLASSIFIER_NAME>```.
 
 
 ### 2. Document Configuration Table
@@ -117,16 +117,16 @@ Clicking on the "Execution input & output tab" at the top show the overall input
 ```
 [
   {
-    "JoinedCSVOutputPath": "s3://documentsplitterworkflow-textractsimplesyncworkfl-10xun1pqvc3j7/textract-csv-output/acord125_pages_1-4_2023-01-05T03:14:28.110714.csv"
+    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/acord125_pages_1-4_<TIMESTAMP>.csv"
   },
   {
-    "JoinedCSVOutputPath": "s3://documentsplitterworkflow-textractsimplesyncworkfl-10xun1pqvc3j7/textract-csv-output/acord126_pages_5-8_2023-01-05T03:14:28.146333.csv"
+    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/acord126_pages_5-8_<TIMESTAMP>.csv"
   },
   {
-    "JoinedCSVOutputPath": "s3://documentsplitterworkflow-textractsimplesyncworkfl-10xun1pqvc3j7/textract-csv-output/acord140_pages_9-11_2023-01-05T03:14:28.070567.csv"
+    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/acord140_pages_9-11_<TIMESTAMP>.csv"
   },
   {
-    "JoinedCSVOutputPath": "s3://documentsplitterworkflow-textractsimplesyncworkfl-10xun1pqvc3j7/textract-csv-output/property_affidavit_pages_12-12_2023-01-05T03:14:28.073459.csv"
+    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/property_affidavit_pages_12-12_<TIMESTAMP>.csv"
   }
 ]
 ```
@@ -141,10 +141,10 @@ Run the script using:
 
 In the ```csvfiles_<timestamp>``` folder, you should see:
 
-```acord125_pages_1-4_<timestamp>.csv```
+```acord125_pages_1-4_<TIMESTAMP>.csv```
 
-```acord126_pages_5-8_<timestamp>.csv```
+```acord126_pages_5-8_<TIMESTAMP>.csv```
 
-```acord140_pages_9-11_<timestamp>.csv```
+```acord140_pages_9-11_<TIMESTAMP>.csv```
 
-```property_affidavit_pages_12-12_<timestamp>.csv```
+```property_affidavit_pages_12-12_<TIMESTAMP>.csv```

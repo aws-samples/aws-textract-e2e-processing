@@ -89,12 +89,10 @@ def lambda_handler(event, _):
     logger.debug(f"version: {version}")
     logger.debug(json.dumps(event))
     csv_s3_output_prefix = os.environ.get('CSV_S3_OUTPUT_PREFIX')
-    output_type = os.environ.get('OUTPUT_TYPE', 'CSV')
     csv_s3_output_bucket = os.environ.get('CSV_S3_OUTPUT_BUCKET')
 
     logger.info(f"CSV_S3_OUTPUT_PREFIX: {csv_s3_output_prefix} \n\
-        CSV_S3_OUTPUT_BUCKET: {csv_s3_output_bucket} \n\
-            OUTPUT_TYPE: {output_type}")
+        CSV_S3_OUTPUT_BUCKET: {csv_s3_output_bucket}")
     task_token = event['Token']
     try:
         if not csv_s3_output_prefix or not csv_s3_output_bucket:
@@ -119,52 +117,41 @@ def lambda_handler(event, _):
 
         timestamp = datetime.datetime.now().astimezone().replace(
             microsecond=0).isoformat()
-        result_value = ""
-        if output_type == 'CSV':
-            has_signature, block_map, table_blocks = get_signature_table_info(file_json)
-            trp2_doc: t2.TDocument = t2.TDocumentSchema().load(
-                file_json)  # type: ignore
 
-            key_value_list = convert_form_to_list_trp2(trp2_doc=trp2_doc)  # type: ignore
-            table_value_list = get_table_list(block_map, table_blocks)  # type: ignore
-            queries_value_list = convert_queries_to_list_trp2(trp2_doc=trp2_doc)  # type: ignore
-            
-            csv_output = io.StringIO()
-            csv_writer = csv.writer(csv_output,
-                                    delimiter=",",
-                                    quotechar='"',
-                                    quoting=csv.QUOTE_MINIMAL)
-            for page in key_value_list:
-                csv_writer.writerows(
-                    [[timestamp, classification, base_filename, "FORMS"] +
-                     [x[1], x[3]] for x in page]) # only include key name and key value
-            for page in queries_value_list:
-                csv_writer.writerows(
-                    [[timestamp, classification, base_filename, "QUERIES"] +
-                     [x[1], x[3]] for x in page]) # only include alias and query result
-            for page in table_value_list:
-                csv_writer.writerows(
-                    [[timestamp, classification, base_filename, "TABLES"] + x
-                     for x in page])
-            if has_signature:
-                signature_value = "Contains Signature"
-            else:
-                signature_value = "Does NOT Contain Signature"
-            csv_writer.writerow(
-                [timestamp, classification, base_filename,
-                 "SIGNATURES", "HAS_SIGNATURE", signature_value])
-            csv_s3_output_key = f"{csv_s3_output_prefix}/{timestamp}/{base_filename_no_suffix}.csv"
-            result_value = csv_output.getvalue()
-        elif output_type == 'LINES':
-            csv_s3_output_key = f"{csv_s3_output_prefix}/{timestamp}/{base_filename_no_suffix}.txt"
-            trp2_doc: t2.TDocument = t2.TDocumentSchema().load(
-                file_json)  # type: ignore
-            for page in trp2_doc.pages:
-                result_value += t2.TDocument.get_text_for_tblocks(
-                    trp2_doc.lines(page=page))
-            logger.debug(f"got {len(result_value)}")
+        has_signature, block_map, table_blocks = get_signature_table_info(file_json)
+        trp2_doc: t2.TDocument = t2.TDocumentSchema().load(
+            file_json)  # type: ignore
+
+        key_value_list = convert_form_to_list_trp2(trp2_doc=trp2_doc)  # type: ignore
+        table_value_list = get_table_list(block_map, table_blocks)  # type: ignore
+        queries_value_list = convert_queries_to_list_trp2(trp2_doc=trp2_doc)  # type: ignore
+
+        csv_output = io.StringIO()
+        csv_writer = csv.writer(csv_output,
+                                delimiter=",",
+                                quotechar='"',
+                                quoting=csv.QUOTE_MINIMAL)
+        for page in key_value_list:
+            csv_writer.writerows(
+                [[timestamp, classification, base_filename, "FORMS"] +
+                 [x[1], x[3]] for x in page])  # only include key name and key value
+        for page in queries_value_list:
+            csv_writer.writerows(
+                [[timestamp, classification, base_filename, "QUERIES"] +
+                 [x[1], x[3]] for x in page])  # only include alias and query result
+        for page in table_value_list:
+            csv_writer.writerows(
+                [[timestamp, classification, base_filename, "TABLES"] + x
+                 for x in page])
+        if has_signature:
+            signature_value = "Contains Signature"
         else:
-            raise ValueError(f"output_type '${output_type}' not supported: ")
+            signature_value = "Does NOT Contain Signature"
+        csv_writer.writerow(
+            [timestamp, classification, base_filename,
+             "SIGNATURES", "HAS_SIGNATURE", signature_value])
+        csv_s3_output_key = f"{csv_s3_output_prefix}/{timestamp}/{base_filename_no_suffix}.csv"
+        result_value = csv_output.getvalue()
 
         s3_client.put_object(Body=bytes(result_value.encode('UTF-8')),
                              Bucket=csv_s3_output_bucket,

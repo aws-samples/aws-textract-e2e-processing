@@ -1,19 +1,17 @@
 {
-    "manifest": {
-        "s3Path": "s3://rm-schademcdkidpstackpaystubw2b23e1d7e-pb6eve1ca8yk/uploads/W2_1_reMars.png"
-    },
-    "mime": "image/png",
-    "classification": {
-        "documentType": "AWS_W2"
-    },
-    "numberOfPages": 1,
-    "Random": {
-        "randomNumber": 5
-    },
-    "textract_result": {
-        "TextractOutputJsonPath": "s3://rm-schademcdkidpstackpaystubw2b23e1d7e-pb6eve1ca8yk/textract-output/W2_1_reMars2022-06-21T00:46:07.656503/W2_1_reMars.json"
-    },
-    "txt_output_location": {
-        "TextractOutputCSVPath": "s3://rm-schademcdkidpstackpaystubw2b23e1d7e-pb6eve1ca8yk/txt_output/2022-06-21T00:46:09+00:00/W2_1_reMars.txt"
-    }
+  "manifest": {
+    "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLAODED_FILE_NAME>/<TIMESTAMP>/12.pdf"
+  },
+  "numberOfPages": 1,
+  "mime": "application/pdf",
+  "textract_result": {
+    "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/12<TIMESTAMP>/12.json"
+  },
+  "txt_output_location": {
+    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/12.txt"
+  },
+  "classification": {
+    "documentType": "property_affidavit",
+    "documentTypeWithPageNum": "property_affidavit_page1"
+  }
 }

@@ -10,15 +10,16 @@ Globals:
     Timeout: 900
 
 Resources:
-  SyncFunction:
+  PutOnSQSFunction:
     Type: AWS::Serverless::Function 
     Properties:
       PackageType: Image
+      Architectures:
+        - x86_64
       Environment:
         Variables:
-          S3_OUTPUT_PREFIX: textract-csv-output
-          S3_OUTPUT_BUCKET: "<S3_OUTPUT_BUCKET>"
-          SQS_QUEUE_URL: "<SQS_QUEUE_URL>"
+          SQS_QUEUE_URL: "https://sqs.<REGION>.amazonaws.com/<ACCOUNT_ID>/<SQS_QUEUE_NAME>"
+          LOG_LEVEL: DEBUG
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: .

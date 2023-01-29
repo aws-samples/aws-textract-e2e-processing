@@ -1,5 +1,5 @@
 {
-    "Token": "AQCcAAAAKgAAAAMAAAAAAAAAASb4gIRL7YhBg5sgME/rgcYI/R67z9fXd1wvaA3q1VU+7bFhprANJeK9bRR6xEDHS9GbsUffwMBMcq5tHlCy9mhn0jQWYSKy1+x9EqHoajRBhuP3vNAJUbtb48eIbMS+2SU6Bv42J2s/XvEd+CgrNsDDXm2AcbN1KzWxOn9sl+j65X2Ul8f/hyTYL3frTDeS/vyjGgM/toTxm8UpKpeIGfLRLzPgAXmjXOPLh2kxNJ9YQxmpx8H9CSFNzVwnuwHNiYyGd1kg/Mh/J0C+9HK2L6tNcuTRESwM46MdVSubVVZjmw0bm361j4d4pGvmFU+dwpmGNbkWWdlOCo/q1iBOPTUJU9FQk41HwX/Ox/i8WO0JanAAZkFNRjIHVawD74EdmT5WdVbqNbM4ETxlB0BcxP2VYAnsPxMNxyEMfv5mzwhhtm8+TWE/k2k+gTdzxNOAaJ6/71oyj/BgidtPVlhEN9dEF5eYBFgDqrR5IPpsUv76TmuU4slg/hYgPWxuBDAwNh1GLp8X88MQn3psW5LxUxRp88IVPlvn8g8hETVjetvQsVHrFjysSggM1gBoL34I1ce88JOsWgG2WgFJ0iD3UOjX64XbbeNlbJ1ztdEl7ptuT9VXKRoh+s56evHtLmw/MPgzPXpRsRkewz1e4Hsef25HJnIO",
+    "Token": "<TOKEN>",
     "Payload": {
         "manifest": {
             "queriesConfig": [
@@ -96,7 +96,7 @@
                     "alias": "ACORD_140_PAGE1_REMARKS"
                 }
             ],
-            "s3Path": "s3://documentsplitterworkflow-textractsimplesyncworkfl-1392pqv2djdit/textract-output/sample-doc/2023-01-10T02:39:51.872446/9.pdf",
+            "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/9.pdf",
             "textractFeatures": [
                 "FORMS",
                 "TABLES",
@@ -106,10 +106,10 @@
         "numberOfPages": 1,
         "mime": "application/pdf",
         "textract_result": {
-            "TextractOutputJsonPath": "s3://documentsplitterworkflow-textractsimplesyncworkfl-1392pqv2djdit/textract-output/92023-01-10T02:39:59.353908/9.json"
+            "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/9<TIMESTAMP>/9.json"
         },
         "txt_output_location": {
-            "TextractOutputCSVPath": "s3://documentsplitterworkflow-textractsimplesyncworkfl-1392pqv2djdit/textract-text-output/2023-01-10T02:40:01+00:00/9.txt"
+            "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/9.txt"
         },
         "classification": {
             "documentType": "acord140",
@@ -117,5 +117,5 @@
         },
         "numberOfQueries": 23
     },
-    "ExecutionId": "arn:aws:states:us-east-1:988522673913:execution:DocumentSplitterWorkflowFF44A6FE-odd07KfLrIID:sample-docpdf2023-01-10T023946779984"
+    "ExecutionId": "arn:aws:states:<REGION>:<ACCOUNT_ID>:execution:<STATE_MACHINE_NAME>:<EXECUTION_NAME>"
 }

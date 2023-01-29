@@ -16,7 +16,7 @@ Resources:
       PackageType: Image
       Environment:
         Variables:
-            CONFIGURATION_TABLE: "DocumentSplitterWorkflow-DocumentSplitterWorkflowConfiguratorTextractConfigurationTableF23A3F4D-18401CI5OCUHI"
+            CONFIGURATION_TABLE: "<CONFIGURATION_TABLE_NAME>"
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: .

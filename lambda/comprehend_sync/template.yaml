@@ -16,9 +16,8 @@ Resources:
       PackageType: Image
       Environment:
         Variables:
-          S3_OUTPUT_PREFIX: textract-csv-output
-          S3_OUTPUT_BUCKET: "<S3_OUTPUT_BUCKET>"
-          SQS_QUEUE_URL: "<SQS_QUEUE_URL>"
+          COMPREHEND_CLASSIFIER_ARN: "arn:aws:comprehend:<REGION>:<ACCOUNT_ID>:document-classifier-endpoint/<CLASSIFIER_NAME>"
+          SQS_QUEUE_URL: "https://sqs.<REGION>.amazonaws.com/<ACCOUNT_ID>/<SQS_QUEUE_NAME>"
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: .

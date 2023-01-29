@@ -18,7 +18,7 @@ Resources:
         - x86_64
       Environment:
         Variables:
-          STATE_MACHINE_ARN: textract-output
+          STATE_MACHINE_ARN: arn:aws:states:<REGION>:<ACCOUNT_ID>:stateMachine:<STATE_MACHINE_NAME>
           LOG_LEVEL: DEBUG
     Metadata:
       Dockerfile: Dockerfile
