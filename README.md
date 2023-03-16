@@ -37,8 +37,8 @@ aws --version
 
 Clone the IDP workflow respository and then ```cd``` into the workflows folder.
 ```
-git clone https://github.com/aws-samples/ aws-textract-e2e-processing.git
-cd  aws-textract-e2e-processing/
+git clone https://github.com/aws-samples/aws-textract-e2e-processing.git
+cd aws-textract-e2e-processing/
 ```
 
 ## Document Splitter Workflow Setup
