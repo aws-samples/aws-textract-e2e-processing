@@ -1,5 +1,6 @@
 from constructs import Construct
 import os
+import json
 import aws_cdk.aws_s3 as s3
 import aws_cdk.aws_s3_notifications as s3n
 import aws_cdk.aws_stepfunctions as sfn
@@ -7,10 +8,8 @@ import aws_cdk.aws_stepfunctions_tasks as tasks
 import aws_cdk.aws_lambda as lambda_
 import aws_cdk.aws_iam as iam
 import aws_cdk.aws_dynamodb as dynamodb
-import aws_cdk.aws_sqs as sqs
 import aws_cdk.custom_resources as custom_resources
 from aws_cdk import (CfnOutput, RemovalPolicy, Stack, Duration, Aws, CustomResource)
-from aws_cdk.aws_lambda_event_sources import SqsEventSource
 import amazon_textract_idp_cdk_constructs as tcdk
 
 
@@ -39,33 +38,9 @@ class DocumentSplitterWorkflow(Stack):
         s3_output_bucket = document_bucket.bucket_name
         workflow_name = "DocumentSplitterWorkflow"
 
-        # DEFINE Lambda functions, policies, SQS queue, SQS EventSource,
-        # DynamoDB table, Provider, CustomResource
-        comprehend_sync_sqs = sqs.Queue(
-            self,
-            'ComprehendRequests',
-            visibility_timeout=Duration.seconds(360)
-        ) # visibility_timeout should be at least six times comprehend_sync_call_function timeout
+        # DEFINE Lambda functions, policies, DynamoDB table, Provider, CustomResource
 
-        put_on_sqs_function = lambda_.DockerImageFunction(
-            self,
-            'PutOnSQS',
-            code=lambda_.DockerImageCode.from_image_asset(os.path.join(script_location,
-                                                                       '../lambda/put_on_sqs/')),
-            architecture=lambda_.Architecture.X86_64,
-            memory_size=256,
-            timeout=Duration.seconds(60),
-            environment={
-                "LOG_LEVEL": "DEBUG",
-                "SQS_QUEUE_URL": comprehend_sync_sqs.queue_url,
-                "SQS_MAX_DELAY": "10"
-            }
-        )
-        put_on_sqs_function.add_to_role_policy(iam.PolicyStatement(
-            actions=['sqs:SendMessage'], resources=[comprehend_sync_sqs.queue_arn]
-        ))
-
-        comprehend_sync_call_function = lambda_.DockerImageFunction(
+        lambda_comprehend_sync = lambda_.DockerImageFunction(
             self,
             'ComprehendSyncCall',
             code=lambda_.DockerImageCode.from_image_asset(os.path.join(script_location,
@@ -74,43 +49,29 @@ class DocumentSplitterWorkflow(Stack):
             timeout=Duration.seconds(60),
             environment={
                 "LOG_LEVEL": "DEBUG",
-                "SQS_QUEUE_URL": comprehend_sync_sqs.queue_url,
-                "SQS_MAX_RETRIES": "4",
-                "SQS_MIN_VIS_TIMEOUT": "5",
-                "SQS_MAX_VIS_TIMEOUT": "15",
-                "COMPREHEND_CLASSIFIER_ARN": comprehend_classifier_endpoint
+                "COMPREHEND_CLASSIFIER_ARN": comprehend_classifier_endpoint,
+                "TEXT_OR_BYTES": "BYTES",
+                "DOCUMENT_READER_CONFIG": json.dumps({
+                    "DocumentReadAction": "TEXTRACT_DETECT_DOCUMENT_TEXT",
+                    "DocumentReadMode": "FORCE_DOCUMENT_READ_ACTION"
+                })
             }
         )
-        comprehend_sync_call_function.add_event_source(SqsEventSource(comprehend_sync_sqs, batch_size=1))
-        comprehend_sync_call_function.add_to_role_policy(iam.PolicyStatement(
+        lambda_comprehend_sync.add_to_role_policy(iam.PolicyStatement(
             actions=['comprehend:ClassifyDocument'], resources=['*']
         ))
-        comprehend_sync_call_function.add_to_role_policy(iam.PolicyStatement(
+        lambda_comprehend_sync.add_to_role_policy(iam.PolicyStatement(
             actions=["textract:Analyze*", "textract:Detect*"],
             resources=["*"]
         ))
-        comprehend_sync_call_function.add_to_role_policy(iam.PolicyStatement(
+        lambda_comprehend_sync.add_to_role_policy(iam.PolicyStatement(
             actions=['s3:GetObject', 's3:ListBucket', 's3:PutObject'],
             resources=[f"arn:aws:s3:::{s3_output_bucket}", f"arn:aws:s3:::{s3_output_bucket}/*"]
         ))
 
-        comprehend_sync_call_function.add_to_role_policy(iam.PolicyStatement(
+        lambda_comprehend_sync.add_to_role_policy(iam.PolicyStatement(
             actions=['states:SendTaskFailure', 'states:SendTaskSuccess'], resources=['*']
         ))
-
-        lambda_decider: lambda_.IFunction = lambda_.DockerImageFunction(
-            self,
-            "LambdaDecider",
-            code=lambda_.DockerImageCode.from_image_asset(
-                os.path.join(script_location,
-                             '../lambda/decider/')),
-            memory_size=1024,
-            timeout=Duration.seconds(900),
-            architecture=lambda_.Architecture.X86_64)
-        lambda_decider.add_to_role_policy(
-            iam.PolicyStatement(
-                actions=["s3:GetObject"],
-                resources=[f"arn:aws:s3:::{s3_output_bucket}", f"arn:aws:s3:::{s3_output_bucket}/*"]))
 
         lambda_textract_sync: lambda_.IFunction = lambda_.DockerImageFunction(
             self,
@@ -265,12 +226,10 @@ class DocumentSplitterWorkflow(Stack):
 
         # DEFINE Step Functions tasks ###############
         # Step Functions task to set document mime type and number of pages
-        decider_task = tasks.LambdaInvoke(
+        decider_task = tcdk.TextractPOCDecider(
             self,
-            f"Task-{workflow_name}-Decider",
-            lambda_function=lambda_decider,
-            timeout=Duration.seconds(100),
-            output_path='$.Payload')
+            f"{workflow_name}-Decider",
+        )
 
         # Step Functions task to split documents into single pages
         document_splitter_task = tcdk.DocumentSplitter(
@@ -283,7 +242,7 @@ class DocumentSplitterWorkflow(Stack):
         comprehend_sync_task = tasks.LambdaInvoke(
             self,
             'TaskClassification',
-            lambda_function=put_on_sqs_function,
+            lambda_function=lambda_comprehend_sync,
             integration_pattern=sfn.IntegrationPattern.WAIT_FOR_TASK_TOKEN,
             timeout=Duration.hours(24),
             payload=sfn.TaskInput.from_object({
@@ -295,6 +254,13 @@ class DocumentSplitterWorkflow(Stack):
                 sfn.JsonPath.entire_payload,
             }),
             result_path="$.classification")
+        comprehend_sync_task.add_retry(
+            max_attempts=100,
+            backoff_rate=1.1,
+            interval=Duration.seconds(1),
+            errors=['ThrottlingException', 'LimitExceededException',
+                    'InternalServerError', 'ProvisionedThroughputExceededException']
+        )
 
         enumerate_pages_task = tasks.LambdaInvoke(
             self,
