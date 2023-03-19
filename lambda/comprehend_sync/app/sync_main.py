@@ -186,4 +186,4 @@ def lambda_handler(event, _):
             logger.error(e, exc_info=True)
             send_failure_to_step_function('ClientError', str(e), token, event)
     except Exception as e:
-        send_failure_to_step_function(e, 'unhandled', str(e), token, event)
+        send_failure_to_step_function('unhandled', str(e), token, event)
