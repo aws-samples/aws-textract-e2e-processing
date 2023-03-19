@@ -113,6 +113,7 @@ class DocumentSplitterWorkflow(Stack):
                 "LOG_LEVEL": "DEBUG",
                 "CSV_S3_OUTPUT_BUCKET": s3_output_bucket,
                 "CSV_S3_OUTPUT_PREFIX": s3_csv_output_prefix,
+                "JOINED_S3_OUTPUT_PREFIX": s3_joined_output_prefix,
                 "OUTPUT_TYPE": "CSV"})
         lambda_generate_csv.add_to_role_policy(
             iam.PolicyStatement(
@@ -331,6 +332,12 @@ class DocumentSplitterWorkflow(Stack):
             self,
             "TaskJoinCSV",
             lambda_function=lambda_join_csv,
+            payload=sfn.TaskInput.from_object({
+                "ExecutionId":
+                    sfn.JsonPath.string_at('$$.Execution.Id'),
+                "Payload":
+                    sfn.JsonPath.entire_payload,
+            }),
             output_path='$.Payload')
 
         # Step Functions Flow Definition #########

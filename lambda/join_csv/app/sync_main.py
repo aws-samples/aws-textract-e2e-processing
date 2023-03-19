@@ -5,10 +5,9 @@ import json
 import logging
 import os
 import boto3
-import csv
 
 import pandas as pd
-from io import BytesIO, StringIO
+from io import BytesIO
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
@@ -37,6 +36,11 @@ def lambda_handler(event, _):
     logger.info(json.dumps(event))
     logger.info(f"boto3 version: {boto3.__version__}.")
 
+    execution_id = event["ExecutionId"].split(":")[-1]
+    payload = event["Payload"]
+    logger.debug(f"execution_id: {execution_id} \n \
+                    payload: {payload}")
+
     s3_output_bucket = os.environ.get('JOINED_S3_OUTPUT_BUCKET')
     s3_output_prefix = os.environ.get('JOINED_S3_OUTPUT_PREFIX')
 
@@ -49,28 +53,18 @@ def lambda_handler(event, _):
                     S3_OUTPUT_PREFIX: {s3_output_prefix}")
 
     all_df = []
-    static_cols = ["Timestamp", "Classification", "Base Filename", "Feature Type",
-                    "Alias", "Value"]
-    for s3_path in event['output_csv_paths']:
+    col_names = ["Timestamp", "Classification", "Base Filename", "Feature Type", "Alias", "Value"]
+    for s3_path in payload['output_csv_paths']:
         file_bytes = get_file_from_s3(s3_path)
         with BytesIO(file_bytes) as f:
-            reader = csv.reader(StringIO(f.getvalue().decode('UTF-8')))
-            num_cols = 0
-            for row in reader:
-                num_cols = max(num_cols, len(row))
-            column_names = list(range(num_cols))
-            df = pd.read_csv(f, names=column_names)
+            df = pd.read_csv(f, header=None)
             all_df.append(df)
 
-    result = pd.concat(all_df)
-    column_names = static_cols + list(range(len(result.columns) - 6))
-    result.columns = column_names
-            
-    result_bytes = result.to_csv(index=False)
-    s3_filename = f"{event['document_type']}_pages_{event['original_document_pages']}"
+    result = pd.concat(all_df, ignore_index=True)
+    result_bytes = result.to_csv(index=False, header=col_names)
+    s3_filename = f"{payload['document_type']}_pages_{payload['original_document_pages']}"
     
-    output_bucket_key = s3_output_prefix + "/" + s3_filename + "_" + datetime.utcnow(
-    ).isoformat() + ".csv"
+    output_bucket_key = f"{s3_output_prefix}/csvfiles_{execution_id}/{s3_filename}_{datetime.utcnow().isoformat()}.csv"
     logger.debug(s3_output_bucket)
     logger.debug(s3_output_prefix)
     logger.debug(output_bucket_key)
@@ -80,6 +74,6 @@ def lambda_handler(event, _):
                   Key=output_bucket_key)
     
     return {
-        "JoinedCSVOutputPath":
-        f"s3://{s3_output_bucket}/{output_bucket_key}"
+        "JoinedCSVOutputPath": f"s3://{s3_output_bucket}/{output_bucket_key}",
+        "TextractOutputTablesPaths": payload['table_csv_paths']
     }

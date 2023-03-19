@@ -91,15 +91,20 @@ def lambda_handler(event, _):
     csv_s3_output_prefix = os.environ.get('CSV_S3_OUTPUT_PREFIX')
     output_type = os.environ.get('OUTPUT_TYPE', 'CSV')
     csv_s3_output_bucket = os.environ.get('CSV_S3_OUTPUT_BUCKET')
+    joined_s3_output_prefix = os.environ.get('JOINED_S3_OUTPUT_PREFIX')
 
     logger.info(f"CSV_S3_OUTPUT_PREFIX: {csv_s3_output_prefix} \n\
-    CSV_S3_OUTPUT_BUCKET: {csv_s3_output_bucket} \n\
-    OUTPUT_TYPE: {output_type}")
+                    CSV_S3_OUTPUT_BUCKET: {csv_s3_output_bucket} \n\
+                    OUTPUT_TYPE: {output_type} \n\
+                    JOINED_S3_OUTPUT_PREFIX: {joined_s3_output_prefix}")
     task_token = event['Token']
     try:
         if not csv_s3_output_prefix or not csv_s3_output_bucket:
             raise ValueError(
                 f"require CSV_S3_OUTPUT_PREFIX and CSV_S3_OUTPUT_BUCKET")
+        if output_type == "CSV" and not joined_s3_output_prefix:
+            raise ValueError(
+                f"require JOINED_S3_OUTPUT_PREFIX since OUTPUT_TYPE is CSV")
         if 'Payload' not in event and 'textract_result' in event[
                 'Payload'] and 'TextractOutputJsonPath' not in event[
                     'Payload']['textract_result']:
@@ -112,6 +117,8 @@ def lambda_handler(event, _):
                 'classification'] and 'documentType' in event['Payload'][
                     'classification']:
             classification = event['Payload']['classification']['documentType']
+            documentTypeWithPageNum = event['Payload']['classification']['documentTypeWithPageNum']
+        execution_id = event["ExecutionId"].split(":")[-1]
 
         base_filename = os.path.basename(s3_path)
         base_filename_no_suffix, _ = os.path.splitext(base_filename)
@@ -126,8 +133,24 @@ def lambda_handler(event, _):
                 file_json)  # type: ignore
 
             key_value_list = convert_form_to_list_trp2(trp2_doc=trp2_doc)  # type: ignore
-            table_value_list = get_table_list(block_map, table_blocks)  # type: ignore
             queries_value_list = convert_queries_to_list_trp2(trp2_doc=trp2_doc)  # type: ignore
+            table_value_list = get_table_list(block_map, table_blocks)  # type: ignore
+
+            table_output_s3_paths = list()
+            for i, table in enumerate(table_value_list):
+                csv_output = io.StringIO()
+                csv_writer = csv.writer(csv_output,
+                                        delimiter=",",
+                                        quotechar='"',
+                                        quoting=csv.QUOTE_MINIMAL)
+                csv_writer.writerows(table)
+                result_value = csv_output.getvalue()
+                table_s3_output_key = \
+                    f"{joined_s3_output_prefix}/csvfiles_{execution_id}/tables/{documentTypeWithPageNum}/table_{i + 1}.csv"
+                table_output_s3_paths.append(f"s3://{csv_s3_output_bucket}/{table_s3_output_key}")
+                s3_client.put_object(Body=bytes(result_value.encode('UTF-8')),
+                                     Bucket=csv_s3_output_bucket,
+                                     Key=table_s3_output_key)
 
             csv_output = io.StringIO()
             csv_writer = csv.writer(csv_output,
@@ -142,10 +165,6 @@ def lambda_handler(event, _):
                 csv_writer.writerows(
                     [[timestamp, classification, base_filename, "QUERIES"] +
                      [x[1], x[3]] for x in page])  # only include alias and query result
-            for page in table_value_list:
-                csv_writer.writerows(
-                    [[timestamp, classification, base_filename, "TABLES"] + x
-                     for x in page])
             if has_signature:
                 signature_value = "Contains Signature"
             else:
@@ -173,12 +192,14 @@ def lambda_handler(event, _):
         logger.debug(
             f"TextractOutputCSVPath: s3://{csv_s3_output_bucket}/{csv_s3_output_key}"
         )
+
+        output_json = {"TextractOutputCSVPath": f"s3://{csv_s3_output_bucket}/{csv_s3_output_key}"}
+        if output_type == "CSV":
+            output_json["TextractOutputTablesPaths"] = [documentTypeWithPageNum, table_output_s3_paths]
+
         step_functions_client.send_task_success(
             taskToken=task_token,
-            output=json.dumps({
-                "TextractOutputCSVPath":
-                f"s3://{csv_s3_output_bucket}/{csv_s3_output_key}"
-            }))
+            output=json.dumps(output_json))
     except Exception as e:
         logger.error(e, exc_info=True)
         step_functions_client.send_task_failure(taskToken=task_token,

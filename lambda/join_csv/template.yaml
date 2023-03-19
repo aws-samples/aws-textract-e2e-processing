@@ -17,6 +17,8 @@ Resources:
       Environment:
         Variables:
           LOG_LEVEL: DEBUG
+          JOINED_S3_OUTPUT_BUCKET: <JOINED_S3_OUTPUT_BUCKET>
+          JOINED_S3_OUTPUT_PREFIX: <JOINED_S3_OUTPUT_PREFIX>
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: .
