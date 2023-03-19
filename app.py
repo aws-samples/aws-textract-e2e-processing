@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import aws_cdk as cdk
-from docsplitter.document_split_workflow import DocumentSplitterWorkflow
+from docsplitter.document_split_workflow_bytes import DocumentSplitterWorkflow
 
 app = cdk.App()
 

@@ -112,7 +112,8 @@ class DocumentSplitterWorkflow(Stack):
             environment={
                 "LOG_LEVEL": "DEBUG",
                 "CSV_S3_OUTPUT_BUCKET": s3_output_bucket,
-                "CSV_S3_OUTPUT_PREFIX": s3_csv_output_prefix})
+                "CSV_S3_OUTPUT_PREFIX": s3_csv_output_prefix,
+                "OUTPUT_TYPE": "CSV"})
         lambda_generate_csv.add_to_role_policy(
             iam.PolicyStatement(
                 actions=['s3:Get*', 's3:List*', 's3:PutObject'],
