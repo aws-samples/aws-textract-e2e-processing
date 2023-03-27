@@ -78,7 +78,12 @@ files = [
   }
 ]
 
-folder_name = "csvfiles/csvfiles_" + datetime.utcnow().isoformat()
+main_csvfiles_folder = "csvfiles"
+
+if not os.path.exists(main_csvfiles_folder):
+  os.mkdir(main_csvfiles_folder)
+
+folder_name = f"{main_csvfiles_folder}/csvfiles_{datetime.utcnow().isoformat()}"
 os.mkdir(folder_name)
 os.mkdir(f"{folder_name}/tables")
 for file in files:
