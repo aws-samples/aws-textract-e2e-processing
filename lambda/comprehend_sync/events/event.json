@@ -1,20 +1,11 @@
 {
-    "Records": [
-        {
-            "messageId": "<MESSAGE_ID>",
-            "receiptHandle": "<RECEIPT_HANDLE>",
-            "body": "{\"Token\": \"<TOKEN>\", \"Payload\": {\"manifest\": {\"s3Path\": \"s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/10.pdf\"}, \"numberOfPages\": 1, \"mime\": \"application/pdf\"}, \"ExecutionId\": \"arn:aws:states:<REGION>:<ACCOUNT_ID>:execution:<STATE_MACHINE_NAME>:<EXECUTION_NAME>\"}",
-            "attributes": {
-                "ApproximateReceiveCount": "2",
-                "SentTimestamp": "<SENT_TIMESTAMP>",
-                "SenderId": "<SENDER_ID>",
-                "ApproximateFirstReceiveTimestamp": "<APPROXIMATE_FIRST_RECEIVE_TIMESTAMP>"
-            },
-            "messageAttributes": {},
-            "md5OfBody": "<MD5_OF_BODY>",
-            "eventSource": "aws:sqs",
-            "eventSourceARN": "arn:aws:sqs:<REGION>:<ACCOUNT_ID>:<SQS_QUEUE_NAME>",
-            "awsRegion": "<REGION>"
-        }
-    ]
+    "Token": "<TOKEN>",
+    "Payload": {
+        "manifest": {
+            "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/10.pdf"
+        },
+        "numberOfPages": 1,
+        "mime": "application/pdf"
+    },
+    "ExecutionId": "arn:aws:states:<REGION>:<ACCOUNT_ID>:execution:<STATE_MACHINE_NAME>:<EXECUTION_NAME>"
 }

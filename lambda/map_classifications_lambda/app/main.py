@@ -22,7 +22,8 @@ def lambda_handler(event, _):
     if s3_filename and classification:
         return {
             s3_filename: classification,
-            "TextractOutputCSVPath": event['csv_output_location']['TextractOutputCSVPath']
+            "TextractOutputCSVPath": event['csv_output_location']['TextractOutputCSVPath'],
+            "TextractOutputTablesPaths": event['csv_output_location']['TextractOutputTablesPaths']
         }
     else:
         return {}

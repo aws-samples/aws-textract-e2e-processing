@@ -26,8 +26,11 @@ def lambda_handler(event, _):
             document = dict()
             document['document_type'] = document_type
             document['output_csv_paths'] = list()
+            document['table_csv_paths'] = dict()
             while event[i][str(i + 1)] == document_type:
                 document['output_csv_paths'].append(event[i]['TextractOutputCSVPath'])
+                tables_pair = event[i]['TextractOutputTablesPaths']
+                document['table_csv_paths'][tables_pair[0]] = tables_pair[1]
                 i += 1
                 if i == len(event):
                     break
