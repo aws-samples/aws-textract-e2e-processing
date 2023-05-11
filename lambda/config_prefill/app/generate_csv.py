@@ -38,40 +38,35 @@ class CSVRow():
 
 
 def get_csv_rows():
-    # acord125
-    acord125_queries: List[List[str]] = list()
-    acord_125_features: List[str] = ["FORMS", "TABLES"]
-    acord125_row = CSVRow("acord125",
-                          acord125_queries,
-                          acord_125_features)
+    # claimform
+    claimform_queries: List[List[str]] = list()
+    claimform_features: List[str] = ["FORMS", "TABLES", "SIGNATURES"]
+    claimform_row = CSVRow("claimform",
+                          claimform_queries,
+                          claimform_features)
 
-    # acord126
-    acord126_queries: List[List[str]] = list()
-    acord126_features: List[str] = ["FORMS", "TABLES"]
-    acord126_row = CSVRow("acord126",
-                          acord126_queries,
-                          acord126_features)
-
-    # acord140
-    acord140_queries: List[List[str]] = list()
-    acord140_features: List[str] = ["FORMS", "TABLES"]
-    acord140_row = CSVRow("acord140",
-                          acord140_queries,
-                          acord140_features)
-
-    # property_affidavit
-    property_affidavit_queries: List[List[str]] = [
-        ["PROP_AFF_OWNER", "What is your name?"],
-        ["PROP_AFF_ADDR", "What is the property's address?"],
-        ["PROP_AFF_DATE_EXEC_ON", "When was this executed on?"],
-        ["PROP_AFF_DATE_SWORN", "When was this subscribed and sworn to?"],
-        ["PROP_AFF_NOTARY", "Who is the notary public?"],
+    # doctorsnote
+    doctorsnote_queries: List[List[str]] = [
+        ["doctorsnote_PATIENT", "Who is the patient?"],
+        ["doctorsnote_PROVIDER", "Who is the attending provider?"]
     ]
-    property_affidavit_features: List[str] = ["SIGNATURES", "QUERIES"]
-    property_affidavit_row = CSVRow("property_affidavit",
-                                    property_affidavit_queries,
-                                    property_affidavit_features)
+    doctorsnote_features: List[str] = ["QUERIES", "SIGNATURES"]
+    doctorsnote_row = CSVRow("doctorsnote",
+                          doctorsnote_queries,
+                          doctorsnote_features)
 
+    # dischargesummary
+    dischargesummary_queries: List[List[str]] = [
+        ["dischargesummary_PATIENT", "What is the patient's name?"],
+        ["dischargesummary_ADMIT", "When was the patient admitted?"],
+        ["dischargesummary_DATE_DISCHARGE", "When was the patient discharged?"],
+        ["dischargesummary_SYMPTOMS", "What are the symptoms?"],
+        ["dischargesummary_SUMMARY", "What is the discharge studies summary?"],
+    ]
+    dischargesummary_features: List[str] = ["FORMS", "QUERIES"]
+    dischargesummary_row = CSVRow("dischargesummary",
+                             dischargesummary_queries,
+                             dischargesummary_features)
 
     return CSVRow.rows
 

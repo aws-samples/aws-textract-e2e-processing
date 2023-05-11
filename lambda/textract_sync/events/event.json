@@ -4,118 +4,33 @@
         "manifest": {
             "queriesConfig": [
                 {
-                    "text": "What is the date?",
-                    "alias": "ACORD_140_DATE"
+                    "text": "Who is the patient?",
+                    "alias": "doctorsnote_PATIENT"
                 },
                 {
-                    "text": "What is the effective date?",
-                    "alias": "ACORD_140_EFF_DATE"
-                },
-                {
-                    "text": "What are the named insured(s)?",
-                    "alias": "ACORD_140_NAMED_INSUREDS"
-                },
-                {
-                    "text": "What is the premises #?",
-                    "alias": "ACORD_140_PREM_NUM"
-                },
-                {
-                    "text": "What is the building #?",
-                    "alias": "ACORD_140_BLDG_NUM"
-                },
-                {
-                    "text": "What is the street address?",
-                    "alias": "ACORD_140_STREET_ADDR"
-                },
-                {
-                    "text": "What is the bldg description?",
-                    "alias": "ACORD_140_BLDG_DESC"
-                },
-                {
-                    "text": "What is the construction type?",
-                    "alias": "ACORD_140_CONSTR_TYPE"
-                },
-                {
-                    "text": "What is the # stories?",
-                    "alias": "ACORD_140_NUM_STORIES"
-                },
-                {
-                    "text": "What is the # basm'ts?",
-                    "alias": "ACORD_140_NUM_BASMTS"
-                },
-                {
-                    "text": "What is the yr built?",
-                    "alias": "ACORD_140_YR_BUILT"
-                },
-                {
-                    "text": "What is the total area?",
-                    "alias": "ACORD_140_TOTAL_AREA"
-                },
-                {
-                    "text": "Is Wiring, Yr selected?",
-                    "alias": "ACORD_140_WIRING_SEL"
-                },
-                {
-                    "text": "What is the amount for Wiring, Yr?",
-                    "alias": "ACORD_140_WIRING_AMT"
-                },
-                {
-                    "text": "Is Roofing, Yr selected?",
-                    "alias": "ACORD_140_ROOFING_SEL"
-                },
-                {
-                    "text": "What is the amount for Roofing, Yr?",
-                    "alias": "ACORD_140_ROOFING_AMT"
-                },
-                {
-                    "text": "Is Plumbing, Yr selected?",
-                    "alias": "ACORD_140_PLUMBING_SEL"
-                },
-                {
-                    "text": "What is the amount for Plumbing, Yr?",
-                    "alias": "ACORD_140_PLUMBING_AMT"
-                },
-                {
-                    "text": "Is Heating, Yr selected?",
-                    "alias": "ACORD_140_HEATING_SEL"
-                },
-                {
-                    "text": "What is the amount for Heating, Yr?",
-                    "alias": "ACORD_140_HEATING_AMT"
-                },
-                {
-                    "text": "Is Other selected for Building Improvements?",
-                    "alias": "ACORD_140_HEATING_SEL"
-                },
-                {
-                    "text": "What is the amount for Yr in Building Improvements?",
-                    "alias": "ACORD_140_HEATING_AMT"
-                },
-                {
-                    "text": "What are the remarks?",
-                    "alias": "ACORD_140_PAGE1_REMARKS"
+                    "text": "Who is the attending provider?",
+                    "alias": "doctorsnote_PROVIDER"
                 }
             ],
-            "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/9.pdf",
+            "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/3.pdf",
             "textractFeatures": [
-                "FORMS",
-                "TABLES",
-                "QUERIES"
+                "QUERIES",
+                "SIGNATURES"
             ]
         },
         "numberOfPages": 1,
         "mime": "application/pdf",
+        "classification": {
+            "documentType": "doctorsnote",
+            "documentTypeWithPageNum": "doctorsnote_page1"
+        },
+        "numberOfQueries": 2,
         "textract_result": {
-            "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/9<TIMESTAMP>/9.json"
+            "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/3<TIMESTAMP>/3.json"
         },
         "txt_output_location": {
-            "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/9.txt"
-        },
-        "classification": {
-            "documentType": "acord140",
-            "documentTypeWithPageNum": "acord140_page1"
-        },
-        "numberOfQueries": 23
+            "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/3.txt"
+        }
     },
     "ExecutionId": "arn:aws:states:<REGION>:<ACCOUNT_ID>:execution:<STATE_MACHINE_NAME>:<EXECUTION_NAME>"
 }

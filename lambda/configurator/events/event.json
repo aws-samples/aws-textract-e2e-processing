@@ -1,17 +1,17 @@
 {
   "manifest": {
-    "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLAODED_FILE_NAME>/<TIMESTAMP>/12.pdf"
+    "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLAODED_FILE_NAME>/<TIMESTAMP>/1.pdf"
   },
   "numberOfPages": 1,
   "mime": "application/pdf",
   "textract_result": {
-    "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/12<TIMESTAMP>/12.json"
+    "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/1<TIMESTAMP>/1.json"
   },
   "txt_output_location": {
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/12.txt"
+    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/1.txt"
   },
   "classification": {
-    "documentType": "property_affidavit",
-    "documentTypeWithPageNum": "property_affidavit_page1"
+    "documentType": "claimform",
+    "documentTypeWithPageNum": "claimform_page1"
   }
 }

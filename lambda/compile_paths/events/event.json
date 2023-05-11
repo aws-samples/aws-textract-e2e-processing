@@ -1,50 +1,28 @@
 [
   {
-    "1": "acord125",
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/1.csv"
+    "1": "claimform",
+    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/1.csv",
+    "TextractOutputTablesPaths": [
+      "claimform_page1",
+      [
+        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/claimform_page1/table_1.csv"
+      ]
+    ]
   },
   {
-    "2": "acord125",
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/2.csv"
+    "2": "dischargesummary",
+    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/2.csv",
+    "TextractOutputTablesPaths": [
+      "dischargesummary_page1",
+      []
+    ]
   },
   {
-    "3": "acord125",
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/3.csv"
-  },
-  {
-    "4": "acord125",
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/4.csv"
-  },
-  {
-    "5": "acord126",
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/5.csv"
-  },
-  {
-    "6": "acord126",
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/6.csv"
-  },
-  {
-    "7": "acord126",
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/7.csv"
-  },
-  {
-    "8": "acord126",
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/8.csv"
-  },
-  {
-    "9": "acord140",
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/9.csv"
-  },
-  {
-    "10": "acord140",
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/10.csv"
-  },
-  {
-    "11": "acord140",
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/11.csv"
-  },
-  {
-    "12": "property_affidavit",
-    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/12.csv"
+    "3": "doctorsnote",
+    "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/3.csv",
+    "TextractOutputTablesPaths": [
+      "doctorsnote_page1",
+      []
+    ]
   }
 ]

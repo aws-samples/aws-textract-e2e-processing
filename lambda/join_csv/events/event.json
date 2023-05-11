@@ -1,32 +1,13 @@
 {
     "Payload": {
-        "document_type": "acord126",
+        "document_type": "doctorsnote",
         "output_csv_paths": [
-            "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/5.csv",
-            "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/6.csv",
-            "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/7.csv",
-            "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/8.csv"
+            "s3://<S3_OUTPUT_BUCKET>/<S3_CSV_OUTPUT_PREFIX>/<TIMESTAMP>/3.csv"
         ],
         "table_csv_paths": {
-            "acord126_page1": [
-                "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page1/table_1.csv",
-                "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page1/table_2.csv",
-                "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page1/table_3.csv"
-            ],
-            "acord126_page2": [
-                "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page2/table_1.csv",
-                "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page2/table_2.csv",
-                "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page2/table_3.csv"
-            ],
-            "acord126_page3": [
-                "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page3/table_1.csv",
-                "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page3/table_2.csv"
-            ],
-            "acord126_page4": [
-                "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page4/table_1.csv"
-            ]
+            "doctorsnote_page1": []
         },
-        "original_document_pages": "5-8"
+        "original_document_pages": "3-3"
     },
     "ExecutionId": "arn:aws:states:<REGION>:<ACCOUNT_ID>:execution:<STATE_MACHINE_NAME>:<EXECUTION_NAME>"
 }

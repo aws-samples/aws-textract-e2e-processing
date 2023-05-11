@@ -12,7 +12,7 @@
       "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/1.txt"
     },
     "classification": {
-      "documentType": "acord125"
+      "documentType": "claimform"
     }
   },
   {
@@ -28,7 +28,7 @@
       "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/2.txt"
     },
     "classification": {
-      "documentType": "acord125"
+      "documentType": "dischargesummary"
     }
   },
   {
@@ -44,151 +44,7 @@
       "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/3.txt"
     },
     "classification": {
-      "documentType": "acord125"
-    }
-  },
-  {
-    "manifest": {
-      "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/4.pdf"
-    },
-    "numberOfPages": 1,
-    "mime": "application/pdf",
-    "textract_result": {
-      "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/4<TIMESTAMP>/4.json"
-    },
-    "txt_output_location": {
-      "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/4.txt"
-    },
-    "classification": {
-      "documentType": "acord125"
-    }
-  },
-  {
-    "manifest": {
-      "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/5.pdf"
-    },
-    "numberOfPages": 1,
-    "mime": "application/pdf",
-    "textract_result": {
-      "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/5<TIMESTAMP>/5.json"
-    },
-    "txt_output_location": {
-      "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/5.txt"
-    },
-    "classification": {
-      "documentType": "acord126"
-    }
-  },
-  {
-    "manifest": {
-      "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/6.pdf"
-    },
-    "numberOfPages": 1,
-    "mime": "application/pdf",
-    "textract_result": {
-      "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/6<TIMESTAMP>/6.json"
-    },
-    "txt_output_location": {
-      "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/6.txt"
-    },
-    "classification": {
-      "documentType": "acord126"
-    }
-  },
-  {
-    "manifest": {
-      "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/7.pdf"
-    },
-    "numberOfPages": 1,
-    "mime": "application/pdf",
-    "textract_result": {
-      "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/7<TIMESTAMP>/7.json"
-    },
-    "txt_output_location": {
-      "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/7.txt"
-    },
-    "classification": {
-      "documentType": "acord126"
-    }
-  },
-  {
-    "manifest": {
-      "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/8.pdf"
-    },
-    "numberOfPages": 1,
-    "mime": "application/pdf",
-    "textract_result": {
-      "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/8<TIMESTAMP>/8.json"
-    },
-    "txt_output_location": {
-      "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/8.txt"
-    },
-    "classification": {
-      "documentType": "acord126"
-    }
-  },
-  {
-    "manifest": {
-      "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/9.pdf"
-    },
-    "numberOfPages": 1,
-    "mime": "application/pdf",
-    "textract_result": {
-      "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/9<TIMESTAMP>/9.json"
-    },
-    "txt_output_location": {
-      "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/9.txt"
-    },
-    "classification": {
-      "documentType": "acord140"
-    }
-  },
-  {
-    "manifest": {
-      "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/10.pdf"
-    },
-    "numberOfPages": 1,
-    "mime": "application/pdf",
-    "textract_result": {
-      "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/10<TIMESTAMP>/10.json"
-    },
-    "txt_output_location": {
-      "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/10.txt"
-    },
-    "classification": {
-      "documentType": "acord140"
-    }
-  },
-  {
-    "manifest": {
-      "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/11.pdf"
-    },
-    "numberOfPages": 1,
-    "mime": "application/pdf",
-    "textract_result": {
-      "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/11<TIMESTAMP>/11.json"
-    },
-    "txt_output_location": {
-      "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/11.txt"
-    },
-    "classification": {
-      "documentType": "acord140"
-    }
-  },
-  {
-    "manifest": {
-      "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/12.pdf"
-    },
-    "numberOfPages": 1,
-    "mime": "application/pdf",
-    "textract_result": {
-      "TextractOutputJsonPath": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/12<TIMESTAMP>/12.json"
-    },
-    "txt_output_location": {
-      "TextractOutputCSVPath": "s3://<S3_OUTPUT_BUCKET>/<S3_TXT_OUTPUT_PREFIX>/<TIMESTAMP>/12.txt"
-    },
-    "classification": {
-      "documentType": "property_affidavit"
+      "documentType": "doctorsnote"
     }
   }
 ]

@@ -1,0 +1,7 @@
+{
+  "DocumentSplitterWorkflow": {
+    "DocumentUploadLocation": "s3://documentsplitterworkflow-textractsimplesyncworkfl-yy3xu24r8ioq/uploads/",
+    "StepFunctionFlowLink": "https://us-east-1.console.aws.amazon.com/states/home?region=us-east-1#/statemachines/view/arn:aws:states:us-east-1:838453065714:stateMachine:DocumentSplitterWorkflowFF44A6FE-7058BDCwEI8r",
+    "StartStepFunctionLambdaLogGroup": "/aws/lambda/DocumentSplitterWorkflow-LambdaStartStepFunctionGe-00QDlbunGKo6"
+  }
+}

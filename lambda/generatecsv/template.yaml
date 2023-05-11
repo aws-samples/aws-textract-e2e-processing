@@ -18,6 +18,7 @@ Resources:
         Variables:
           CSV_S3_OUTPUT_PREFIX: textract-csv-output
           CSV_S3_OUTPUT_BUCKET: "<S3_OUTPUT_BUCKET>"
+          JOINED_S3_OUTPUT_PREFIX: textract-joined-output
           LOG_LEVEL: DEBUG
     Metadata:
       Dockerfile: Dockerfile

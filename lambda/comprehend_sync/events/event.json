@@ -2,7 +2,7 @@
     "Token": "<TOKEN>",
     "Payload": {
         "manifest": {
-            "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/10.pdf"
+            "s3Path": "s3://<S3_OUTPUT_BUCKET>/<S3_OUTPUT_PREFIX>/<UPLOADED_FILE_NAME>/<TIMESTAMP>/1.pdf"
         },
         "numberOfPages": 1,
         "mime": "application/pdf"

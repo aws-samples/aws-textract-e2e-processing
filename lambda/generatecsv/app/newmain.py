@@ -123,13 +123,14 @@ def lambda_handler(event, _):
         base_filename = os.path.basename(s3_path)
         base_filename_no_suffix, _ = os.path.splitext(base_filename)
         file_json = json.loads(get_file_from_s3(s3_path=s3_path).decode('utf-8'))
-        trp2_doc: t2.TDocument = t2.TDocumentSchema().load(file_json)  # type: ignore
 
         timestamp = datetime.datetime.now().astimezone().replace(
             microsecond=0).isoformat()
 
         if output_type == "CSV":
             has_signature, block_map, table_blocks = get_signature_table_info(file_json)
+            trp2_doc: t2.TDocument = t2.TDocumentSchema().load(
+                file_json)  # type: ignore
 
             key_value_list = convert_form_to_list_trp2(trp2_doc=trp2_doc)  # type: ignore
             queries_value_list = convert_queries_to_list_trp2(trp2_doc=trp2_doc)  # type: ignore
@@ -175,6 +176,8 @@ def lambda_handler(event, _):
             result_value = csv_output.getvalue()
         elif output_type == 'LINES':
             csv_s3_output_key = f"{csv_s3_output_prefix}/{timestamp}/{base_filename_no_suffix}.txt"
+            trp2_doc: t2.TDocument = t2.TDocumentSchema().load(
+                file_json)  # type: ignore
             result_value = ""
             for page in trp2_doc.pages:
                 result_value += t2.TDocument.get_text_for_tblocks(
@@ -186,11 +189,13 @@ def lambda_handler(event, _):
         s3_client.put_object(Body=bytes(result_value.encode('UTF-8')),
                              Bucket=csv_s3_output_bucket,
                              Key=csv_s3_output_key)
+        logger.debug(
+            f"TextractOutputCSVPath: s3://{csv_s3_output_bucket}/{csv_s3_output_key}"
+        )
 
         output_json = {"TextractOutputCSVPath": f"s3://{csv_s3_output_bucket}/{csv_s3_output_key}"}
         if output_type == "CSV":
             output_json["TextractOutputTablesPaths"] = [documentTypeWithPageNum, table_output_s3_paths]
-        logger.debug(output_json)
 
         step_functions_client.send_task_success(
             taskToken=task_token,

@@ -42,10 +42,10 @@ cd aws-textract-e2e-processing/
 
 ## Document Splitter Workflow Setup
 
-There will be two areas to modify. In our demo today will be using Acord Insurance Forms.
+There will be two areas to modify. In our demo today will be using Health Insurance Forms.
 
 ### 1. Comprehend Classifier
-If you want to train a classifier with the Acord Insurance Forms used in the demo, you can use the [comprehend_acord_dataset.csv](https://github.com/aws-samples/aws-textract-e2e-processing/blob/main/comprehend_acord_dataset.csv) file in this repo. Refer to the [Amazon Comprehend documentation](https://docs.aws.amazon.com/comprehend/latest/dg/training-classifier-model.html) for more information on how to train a classifier.
+If you want to train a classifier with the provided medical documents used in the demo, you can use the [comprehend_claims_dataset.csv](https://github.com/aws-samples/aws-textract-e2e-processing/blob/main/comprehend_claims_dataset.csv) file in this repo. Refer to the [Amazon Comprehend documentation](https://docs.aws.amazon.com/comprehend/latest/dg/training-classifier-model.html) for more information on how to train a classifier.
 
 Alternatively, you can train your own classifier with a set of documents using workflow1 of this project, you can train your own Comprehend Classifier: 
 https://github.com/aws-samples/aws-document-classifier-and-splitter.
@@ -109,72 +109,23 @@ Clicking on the "Execution input & output tab" at the top show the overall input
 ```
 [
   {
-    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/acord125_pages_1-4_<TIMESTAMP>.csv",
+    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/claimform_pages_1-1_<TIMESTAMP>.csv",
     "TextractOutputTablesPaths": {
-      "acord125_page1": [
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page1/table_1.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page1/table_2.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page1/table_3.csv"
+      "claimform_page1": [
+        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/claimform_page1/table_1.csv"
       ],
-      "acord125_page2": [
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page2/table_1.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page2/table_2.csv"
-      ],
-      "acord125_page3": [
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page3/table_1.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page3/table_2.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page3/table_3.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page3/table_4.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page3/table_5.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page3/table_6.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page3/table_7.csv"
-      ],
-      "acord125_page4": [
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page4/table_1.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord125_page4/table_2.csv"
-      ]
     }
   },
   {
-    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/acord126_pages_5-8_<TIMESTAMP>.csv",
+    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/dischargesummary_pages_2-2_<TIMESTAMP>.csv",
     "TextractOutputTablesPaths": {
-      "acord126_page1": [
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page1/table_1.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page1/table_2.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page1/table_3.csv"
-      ],
-      "acord126_page2": [
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page2/table_1.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page2/table_2.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page2/table_3.csv"
-      ],
-      "acord126_page3": [
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page3/table_1.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page3/table_2.csv"
-      ],
-      "acord126_page4": [
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord126_page4/table_1.csv"
-      ]
+      "dischargesummary_page1": []
     }
   },
   {
-    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/acord140_pages_9-11_<TIMESTAMP>.csv",
+    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/doctorsnote_pages_3-3_<TIMESTAMP>.csv",
     "TextractOutputTablesPaths": {
-      "acord140_page1": [
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord140_page1/table_1.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord140_page1/table_2.csv"
-      ],
-      "acord140_page2": [
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord140_page2/table_1.csv",
-        "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/csvfiles_<EXECUTION_NAME>/tables/acord140_page2/table_2.csv"
-      ],
-      "acord140_page3": []
-    }
-  },
-  {
-    "JoinedCSVOutputPath": "s3://<S3_OUTPUT_BUCKET>/<S3_JOINED_OUTPUT_PREFIX>/property_affidavit_pages_12-12_<TIMESTAMP>.csv",
-    "TextractOutputTablesPaths": {
-      "property_affidavit_page1": []
+      "doctorsnote_page1": []
     }
   }
 ]
@@ -184,7 +135,7 @@ Each of the outputted CSV files is the result of parsing its original pages' Tex
 
 FORMS, QUERIES, and SIGNATURES are in the joined CSV files. 
 
-TABLES are split into multiple CSV files, one for each table. These files are in a subfolder within the ```tables``` folder, where the subfolder is named after the document type and page number that the table is extracted from. For example, all tables extracted from page 1 of the acord125 form are in the ```acord125_page1``` folder.
+TABLES are split into multiple CSV files, one for each table. These files are in a subfolder within the ```tables``` folder, where the subfolder is named after the document type and page number that the table is extracted from. For example, all tables extracted from the HICFA claim form are in the ```claimform_page1``` subfolder.
 
 Open ```getfiles.py```. Set ```files``` to be the list outputted by the state machine execution.
 
@@ -194,12 +145,10 @@ Run the script using:
 
 In your local ```csvfiles/csvfiles_<timestamp>``` folder, you should see:
 
-- ```acord125_pages_1-4_<TIMESTAMP>.csv```
+- ```claimform_pages_1-1_<TIMESTAMP>.csv```
 
-- ```acord126_pages_5-8_<TIMESTAMP>.csv```
+- ```dischargesummary_pages_2-2_<TIMESTAMP>.csv```
 
-- ```acord140_pages_9-11_<TIMESTAMP>.csv```
-
-- ```property_affidavit_pages_12-12_<TIMESTAMP>.csv```
+- ```doctorsnote_pages_3-3_<TIMESTAMP>.csv```
 
 - ```tables/```
